@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f7f8f4;
+  --color-surface: #ffffff;
+  --color-ink: #17213a;
+  --color-slate: #647084;
+  --color-line: #d8dde6;
+  --color-cobalt: #315ddd;
+  --color-cobalt-dark: #2447b1;
+  --color-code: #c95d2e;
+  --color-mist: #eaf0ff;
+  --font-sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+  --font-display: "Arial Narrow", "Segoe UI Variable Display", sans-serif;
+  --font-mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+}
+
+:root {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-paper);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-cobalt) 55%, transparent);
+  outline-offset: 3px;
+}
+
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  .page-title {
+    @apply max-w-4xl font-display text-4xl leading-[0.98] font-bold tracking-[-0.035em] uppercase sm:text-6xl;
+  }
+
+  .section-title {
+    @apply font-display text-2xl leading-tight font-bold tracking-[-0.02em] uppercase sm:text-3xl;
+  }
+
+  .eyebrow {
+    @apply font-mono text-xs font-semibold tracking-[0.16em] text-cobalt uppercase;
+  }
+
+  .panel {
+    @apply border border-line bg-surface shadow-[4px_4px_0_0_#d8dde6];
+  }
+
+  .button-primary {
+    @apply items-center justify-center bg-cobalt px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-cobalt-dark disabled:cursor-not-allowed disabled:bg-slate/45;
+  }
+
+  .button-secondary {
+    @apply items-center justify-center border border-ink bg-transparent px-5 py-3 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-white;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
