@@ -1,7 +1,12 @@
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, StringConstraints, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    StringConstraints,
+    model_validator,
+)
 
 ProblemContent = Annotated[
     str,
@@ -16,6 +21,8 @@ class ProblemSolveRequest(BaseModel):
 
 
 class ProblemSolution(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     title: str
     difficulty: ProblemDifficulty
     tags: list[str]

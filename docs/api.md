@@ -21,7 +21,7 @@
 
 ### `POST /api/problems/solve`
 
-提交题目文本，获取固定的“两数之和”Mock 解析并保存为学习记录。
+提交题目文本，获取结构化 AI 解析并保存为学习记录。配置 `DEEPSEEK_API_KEY` 时使用 DeepSeek；未配置时使用固定 Mock Provider。
 
 请求示例：
 
@@ -57,8 +57,13 @@
 
 状态码：
 
-- `200 OK`：返回完整 Mock 解析。
+- `200 OK`：返回完整解析并已保存。
+- `502 Bad Gateway`：AI 返回内容为空、不是合法 JSON 或未通过 Schema 校验。
+- `503 Service Unavailable`：AI Key 无效、被限流或上游服务不可用。
+- `504 Gateway Timeout`：AI 服务调用超时。
 - `422 Unprocessable Entity`：请求体缺失或题目文本过短。
+
+所有 AI 失败场景都不会创建题目、解析或标签记录。
 
 ### `GET /api/problems`
 
@@ -108,5 +113,3 @@
 ```text
 GET /api/problems?tag=哈希表&review_only=true
 ```
-
-实际请求和响应结构将在实现相应功能时确定并写入本文档。

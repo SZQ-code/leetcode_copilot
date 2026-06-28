@@ -61,8 +61,8 @@ export function ProblemInput({
       <div className="flex flex-col gap-3 border-t border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-slate">
           {isSubmitting
-            ? "正在调用 Mock Solver，请稍候。"
-            : "当前阶段返回固定的两数之和 Mock 解析。"}
+            ? "正在调用 AI Solver，请稍候。"
+            : "后端会按配置使用 DeepSeek 或 Mock Provider。"}
         </p>
         <button
           className="button-primary inline-flex"

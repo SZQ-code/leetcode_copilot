@@ -136,9 +136,9 @@ export function SolutionPanel({
   title = "AI 解析",
 }: SolutionPanelProps) {
   const statusLabel = {
-    idle: "MOCK_READY",
+    idle: "AI_READY",
     loading: "PROCESSING",
-    success: "MOCK_RESULT",
+    success: "AI_RESULT",
     error: "REQUEST_FAILED",
   }[status];
 
@@ -160,7 +160,7 @@ export function SolutionPanel({
               ANALYZING PROBLEM
             </p>
             <p className="mt-3 text-sm text-slate">
-              Mock Solver 正在整理题意、思路和代码。
+              AI Solver 正在整理题意、思路和代码。
             </p>
           </div>
         ) : status === "error" ? (
@@ -174,8 +174,8 @@ export function SolutionPanel({
           <SolutionContent solution={solution} />
         ) : (
           <p className="max-w-2xl text-sm leading-7 text-slate">
-            输入不少于 10 个字符的题目文本并提交。这里将展示固定的两数之和
-            Mock 解析，用于验证完整解题链路。
+            输入不少于 10 个字符的题目文本并提交。这里将展示结构化题目解析、
+            Python 实现和学习建议。
           </p>
         )}
       </div>

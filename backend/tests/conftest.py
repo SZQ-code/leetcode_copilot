@@ -6,9 +6,22 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session, sessionmaker
 
 from app import models as _models  # noqa: F401
+from app.core.config import get_settings
 from app.db.base import Base
 from app.db.database import create_sqlite_engine, get_db
 from app.main import app
+
+
+@pytest.fixture(autouse=True)
+def force_mock_ai_provider(
+    monkeypatch: pytest.MonkeyPatch,
+) -> Generator[None, None, None]:
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "")
+    get_settings.cache_clear()
+
+    yield
+
+    get_settings.cache_clear()
 
 
 @pytest.fixture

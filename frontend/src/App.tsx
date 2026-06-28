@@ -39,10 +39,9 @@ export default function App() {
       <footer className="border-t border-line">
         <div className="page-shell flex flex-col gap-2 py-7 text-sm text-slate sm:flex-row sm:items-center sm:justify-between">
           <span>LeetCode Copilot</span>
-          <span className="font-mono text-xs">FRAMEWORK_STAGE / NO_AI_CONNECTED</span>
+          <span className="font-mono text-xs">AI_PROVIDER / READY</span>
         </div>
       </footer>
     </div>
   );
 }
-

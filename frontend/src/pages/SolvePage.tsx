@@ -45,8 +45,8 @@ export function SolvePage() {
       <p className="eyebrow">SOLVE / INPUT</p>
       <h1 className="page-title mt-4">把题目放进学习闭环</h1>
       <p className="mt-5 max-w-2xl leading-7 text-slate">
-        粘贴题目并完成一次真实的前后端请求。当前返回固定的两数之和 Mock
-        解析，用于验证完整学习流程。
+        粘贴算法题文本，由 AI 生成题目总结、解题思路、Python
+        实现、复杂度分析和复盘建议。
       </p>
       <div className="mt-10 grid items-start gap-8 xl:grid-cols-[0.85fr_1.15fr]">
         <div className="space-y-4">

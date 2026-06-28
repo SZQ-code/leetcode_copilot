@@ -13,6 +13,17 @@ const API_BASE_URL = (
   import.meta.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL
 ).replace(/\/$/, "");
 
+async function readErrorDetail(response: Response): Promise<string | null> {
+  try {
+    const payload = (await response.json()) as {
+      detail?: unknown;
+    };
+    return typeof payload.detail === "string" ? payload.detail : null;
+  } catch {
+    return null;
+  }
+}
+
 async function apiRequest<T>(
   path: string,
   init?: RequestInit,
@@ -32,6 +43,11 @@ async function apiRequest<T>(
 
     if (response.status === 422) {
       throw new Error("提交的数据未通过校验，请检查输入内容。");
+    }
+
+    const detail = await readErrorDetail(response);
+    if (detail) {
+      throw new Error(detail);
     }
 
     throw new Error(`请求失败（HTTP ${response.status}），请稍后重试。`);
