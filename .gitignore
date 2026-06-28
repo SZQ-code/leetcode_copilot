@@ -26,3 +26,5 @@ __pycache__/
 .vscode/
 .DS_Store
 Thumbs.db
+leetcode copliot/
+backend/leetcode-copliot/
