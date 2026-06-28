@@ -21,7 +21,7 @@
 
 ### `POST /api/problems/solve`
 
-提交题目文本并获取固定的“两数之和”Mock 解析。
+提交题目文本，获取固定的“两数之和”Mock 解析并保存为学习记录。
 
 请求示例：
 
@@ -35,6 +35,8 @@
 
 成功响应包含：
 
+- `problem_id`
+- `original_content`
 - `title`
 - `difficulty`
 - `tags`
@@ -48,19 +50,44 @@
 - `common_mistakes`
 - `edge_cases`
 - `teaching_analysis`
+- `mastery_status`
+- `personal_notes`
+- `created_at`
+- `updated_at`
 
 状态码：
 
 - `200 OK`：返回完整 Mock 解析。
 - `422 Unprocessable Entity`：请求体缺失或题目文本过短。
 
+### `GET /api/problems`
+
+按创建时间倒序返回历史记录。列表项包含 ID、标题、难度、标签、掌握状态和创建时间。
+
+### `GET /api/problems/{problem_id}`
+
+返回原题、完整解析、标签、掌握状态和个人备注。
+
+- `200 OK`：返回题目详情。
+- `404 Not Found`：记录不存在。
+
+### `PATCH /api/problems/{problem_id}`
+
+部分更新掌握状态或个人备注。请求至少包含一个字段：
+
+```json
+{
+  "mastery_status": "学习中",
+  "personal_notes": "复习时重点解释为什么先查补数。"
+}
+```
+
+允许的掌握状态为 `未掌握`、`学习中` 和 `已掌握`。个人备注最长 5000 字符。
+
 ## 计划中的 MVP 接口
 
 以下接口只用于说明后续方向，本阶段未实现：
 
-- `GET /api/problems`：获取历史记录。
-- `GET /api/problems/{problem_id}`：获取题目详情。
-- `PATCH /api/problems/{problem_id}`：更新掌握状态和个人备注。
 - `GET /api/categories`：获取按算法标签归纳的数据。
 
 实际请求和响应结构将在实现相应功能时确定并写入本文档。

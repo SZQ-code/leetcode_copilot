@@ -3,14 +3,16 @@ import { Link } from "react-router-dom";
 import { TagBadge } from "./TagBadge";
 
 interface ProblemCardProps {
-  id: string;
+  createdAt?: string;
   title: string;
+  id: number | string;
   difficulty: "简单" | "中等" | "困难";
   tags: string[];
   status: string;
 }
 
 export function ProblemCard({
+  createdAt,
   id,
   title,
   difficulty,
@@ -29,9 +31,22 @@ export function ProblemCard({
           </div>
           <h2 className="mt-2 text-xl font-bold text-ink">{title}</h2>
         </div>
-        <span className="w-fit border border-line px-3 py-1 font-mono text-xs text-slate">
-          {status}
-        </span>
+        <div className="flex flex-col items-start gap-2 sm:items-end">
+          <span className="w-fit border border-line px-3 py-1 font-mono text-xs text-slate">
+            {status}
+          </span>
+          {createdAt ? (
+            <time
+              className="font-mono text-xs text-slate"
+              dateTime={createdAt}
+            >
+              {new Intl.DateTimeFormat("zh-CN", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              }).format(new Date(createdAt))}
+            </time>
+          ) : null}
+        </div>
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
         {tags.map((tag) => (
@@ -47,4 +62,3 @@ export function ProblemCard({
     </article>
   );
 }
-

@@ -9,10 +9,11 @@ flowchart LR
     U[浏览器] --> F[React 前端]
     F --> A[FastAPI API]
     A --> S[mock ai_solver]
-    A -. 后续阶段 .-> D[(SQLite)]
+    A --> O[SQLAlchemy]
+    O --> D[(SQLite)]
 ```
 
-当前阶段已启用 React 解题页、`POST /api/problems/solve` 和固定 Mock Solver。SQLite 虚线链路将在后续阶段实现。
+当前阶段已启用 React 解题、历史和详情页面、固定 Mock Solver，以及 SQLAlchemy/SQLite 持久化。
 
 ## 前端分层
 
@@ -30,6 +31,7 @@ frontend/src/
 ```text
 backend/app/
 ├── api/         # HTTP 路由
+├── db/          # Engine、Session 和建表
 ├── services/    # AI 和业务服务
 ├── models/      # 数据库模型
 ├── schemas/     # 请求和响应结构
@@ -41,5 +43,6 @@ backend/app/
 - API 层只处理 HTTP 输入输出，不承载解题逻辑。
 - AI 调用封装在 `services`，便于从 mock 切换到真实提供商。
 - Pydantic schema 与数据库 model 分离。
+- 请求级 Session 通过 FastAPI 依赖注入，写入失败时回滚事务。
 - 前端页面通过可复用组件组合，不直接拼接后端 URL。
 - 前端 API 请求集中在 `src/api`，请求和响应类型集中在 `src/types`。

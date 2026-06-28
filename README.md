@@ -2,13 +2,13 @@
 
 LeetCode Copilot 是面向编程学习者的 AI 刷题辅助平台。项目计划覆盖题目理解、思路生成、代码实现、刷题记录、题型归纳、复盘和教学分析，形成完整的算法学习闭环。
 
-当前仓库已经打通 Mock 解题闭环：前端可以提交题目文本，后端通过固定的 mock `ai_solver` 返回完整“两数之和”解析。尚未实现 SQLite 数据模型、历史记录业务或真实 AI。
+当前仓库已经打通可持久化的 Mock 学习闭环：前端可以提交题目文本，后端通过固定的 mock `ai_solver` 返回完整“两数之和”解析并保存到 SQLite。用户可以浏览历史记录、查看详情，以及保存掌握状态和个人备注。尚未接入真实 AI。
 
 ## 技术栈
 
 - 前端：React、TypeScript、Vite、Tailwind CSS、React Router
 - 后端：FastAPI、Python
-- 数据库：SQLite（后续 MVP 阶段接入）
+- 数据库：SQLite、SQLAlchemy 2.0
 - 架构：前后端分离
 
 ## 目录结构
@@ -53,6 +53,8 @@ uvicorn app.main:app --reload
 当前所有有效输入都会返回固定的“两数之和”Mock 解析，页面会明确显示 `MOCK_RESULT`。
 
 如需修改后端地址，可复制 `frontend/.env.example` 为 `frontend/.env` 并调整 `VITE_API_BASE_URL`。
+
+开发数据库自动创建在 `backend/data/leetcode_copilot.db`。该文件已被 Git 忽略。
 
 ## 运行检查
 
