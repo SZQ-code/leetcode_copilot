@@ -7,12 +7,12 @@ LeetCode Copilot 使用前后端分离架构：
 ```mermaid
 flowchart LR
     U[浏览器] --> F[React 前端]
-    F -. 后续阶段 .-> A[FastAPI API]
-    A -. 后续阶段 .-> S[ai_solver]
+    F --> A[FastAPI API]
+    A --> S[mock ai_solver]
     A -. 后续阶段 .-> D[(SQLite)]
 ```
 
-当前阶段只启用 React 页面骨架和 FastAPI 的 `GET /health`。虚线链路将在后续 MVP 阶段实现。
+当前阶段已启用 React 解题页、`POST /api/problems/solve` 和固定 Mock Solver。SQLite 虚线链路将在后续阶段实现。
 
 ## 前端分层
 
@@ -41,5 +41,5 @@ backend/app/
 - API 层只处理 HTTP 输入输出，不承载解题逻辑。
 - AI 调用封装在 `services`，便于从 mock 切换到真实提供商。
 - Pydantic schema 与数据库 model 分离。
-- 前端页面通过可复用组件组合，API 访问将在独立模块中实现。
-
+- 前端页面通过可复用组件组合，不直接拼接后端 URL。
+- 前端 API 请求集中在 `src/api`，请求和响应类型集中在 `src/types`。

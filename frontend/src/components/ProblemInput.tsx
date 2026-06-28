@@ -2,11 +2,13 @@ import { FormEvent, useState } from "react";
 
 interface ProblemInputProps {
   disabled?: boolean;
+  isSubmitting?: boolean;
   onSubmit?: (problemText: string) => void;
 }
 
 export function ProblemInput({
   disabled = false,
+  isSubmitting = false,
   onSubmit,
 }: ProblemInputProps) {
   const [problemText, setProblemText] = useState("");
@@ -15,7 +17,7 @@ export function ProblemInput({
     event.preventDefault();
     const value = problemText.trim();
 
-    if (!disabled && value) {
+    if (!disabled && !isSubmitting && value) {
       onSubmit?.(value);
     }
   }
@@ -50,6 +52,7 @@ export function ProblemInput({
         <textarea
           className="min-h-52 w-full resize-y bg-surface px-5 py-4 font-mono text-sm leading-7 text-ink outline-none placeholder:text-slate/60"
           id="problem"
+          disabled={disabled || isSubmitting}
           onChange={(event) => setProblemText(event.target.value)}
           placeholder={"在这里粘贴算法题文本，例如：\n给定一个整数数组 nums 和一个目标值 target……"}
           value={problemText}
@@ -57,17 +60,18 @@ export function ProblemInput({
       </div>
       <div className="flex flex-col gap-3 border-t border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-slate">
-          {disabled ? "解题接口将在下一开发阶段接入。" : "提交后将生成结构化题目解析。"}
+          {isSubmitting
+            ? "正在调用 Mock Solver，请稍候。"
+            : "当前阶段返回固定的两数之和 Mock 解析。"}
         </p>
         <button
           className="button-primary inline-flex"
-          disabled={disabled || !problemText.trim()}
+          disabled={disabled || isSubmitting || !problemText.trim()}
           type="submit"
         >
-          生成题目解析
+          {isSubmitting ? "正在分析…" : "生成题目解析"}
         </button>
       </div>
     </form>
   );
 }
-
