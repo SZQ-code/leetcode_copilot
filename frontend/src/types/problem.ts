@@ -43,3 +43,26 @@ export interface ProblemUpdateRequest {
   mastery_status?: MasteryStatus;
   personal_notes?: string;
 }
+
+export interface ProblemListFilters {
+  tag?: string | null;
+  reviewOnly?: boolean;
+}
+
+export interface CategoryStats {
+  tag: string;
+  total_count: number;
+  unmastered_count: number;
+  learning_count: number;
+  mastered_count: number;
+  review_count: number;
+  mastery_rate: number;
+}
+
+export interface CategoryOverview {
+  total_problems: number;
+  mastered_problems: number;
+  review_problems: number;
+  mastery_rate: number;
+  categories: CategoryStats[];
+}

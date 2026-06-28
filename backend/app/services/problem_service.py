@@ -103,12 +103,25 @@ def save_solved_problem(
     return _to_detail(problem)
 
 
-def list_problems(session: Session) -> list[ProblemListItem]:
-    problems = session.scalars(
+def list_problems(
+    session: Session,
+    *,
+    tag: str | None = None,
+    review_only: bool = False,
+) -> list[ProblemListItem]:
+    statement = (
         select(Problem)
         .options(selectinload(Problem.tags))
         .order_by(Problem.created_at.desc(), Problem.id.desc())
-    ).all()
+    )
+    if tag is not None:
+        statement = statement.join(Problem.tags).where(Tag.name == tag)
+    if review_only:
+        statement = statement.where(
+            Problem.mastery_status.in_(["未掌握", "学习中"])
+        )
+
+    problems = session.scalars(statement).all()
 
     return [
         ProblemListItem(

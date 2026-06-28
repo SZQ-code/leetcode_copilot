@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
@@ -36,8 +36,26 @@ def solve(
 
 
 @router.get("", response_model=list[ProblemListItem])
-def history(session: DatabaseSession) -> list[ProblemListItem]:
-    return list_problems(session)
+def history(
+    session: DatabaseSession,
+    tag: Annotated[
+        str | None,
+        Query(min_length=1, max_length=100),
+    ] = None,
+    review_only: bool = False,
+) -> list[ProblemListItem]:
+    normalized_tag = tag.strip() if tag is not None else None
+    if tag is not None and not normalized_tag:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Tag must not be blank.",
+        )
+
+    return list_problems(
+        session,
+        tag=normalized_tag,
+        review_only=review_only,
+    )
 
 
 @router.get("/{problem_id}", response_model=ProblemDetail)

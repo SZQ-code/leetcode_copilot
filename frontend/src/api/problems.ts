@@ -1,6 +1,8 @@
 import type {
+  CategoryOverview,
   ProblemDetail,
   ProblemListItem,
+  ProblemListFilters,
   ProblemSolution,
   ProblemSolveRequest,
   ProblemUpdateRequest,
@@ -59,8 +61,21 @@ export function solveProblem(content: string): Promise<ProblemDetail> {
   );
 }
 
-export function getProblems(): Promise<ProblemListItem[]> {
-  return apiRequest<ProblemListItem[]>("/api/problems");
+export function getProblems(
+  filters: ProblemListFilters = {},
+): Promise<ProblemListItem[]> {
+  const params = new URLSearchParams();
+  if (filters.tag) {
+    params.set("tag", filters.tag);
+  }
+  if (filters.reviewOnly) {
+    params.set("review_only", "true");
+  }
+
+  const query = params.toString();
+  return apiRequest<ProblemListItem[]>(
+    `/api/problems${query ? `?${query}` : ""}`,
+  );
 }
 
 export function getProblem(problemId: number): Promise<ProblemDetail> {
@@ -75,4 +90,8 @@ export function updateProblem(
     `/api/problems/${problemId}`,
     jsonRequestInit("PATCH", updates),
   );
+}
+
+export function getCategories(): Promise<CategoryOverview> {
+  return apiRequest<CategoryOverview>("/api/categories");
 }

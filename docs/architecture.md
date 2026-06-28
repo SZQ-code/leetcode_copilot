@@ -13,7 +13,7 @@ flowchart LR
     O --> D[(SQLite)]
 ```
 
-当前阶段已启用 React 解题、历史和详情页面、固定 Mock Solver，以及 SQLAlchemy/SQLite 持久化。
+当前阶段已启用 React 解题、历史、详情和题型复盘页面、固定 Mock Solver，以及 SQLAlchemy/SQLite 持久化。
 
 ## 前端分层
 
@@ -44,5 +44,6 @@ backend/app/
 - AI 调用封装在 `services`，便于从 mock 切换到真实提供商。
 - Pydantic schema 与数据库 model 分离。
 - 请求级 Session 通过 FastAPI 依赖注入，写入失败时回滚事务。
+- 分类统计由后端基于现有题目和标签关系实时聚合，不维护冗余统计表。
 - 前端页面通过可复用组件组合，不直接拼接后端 URL。
 - 前端 API 请求集中在 `src/api`，请求和响应类型集中在 `src/types`。

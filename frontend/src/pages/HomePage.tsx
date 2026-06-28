@@ -38,7 +38,7 @@ export function HomePage() {
               ["Frontend", "READY"],
               ["FastAPI", "HEALTHY"],
               ["AI solver", "NEXT STAGE"],
-              ["SQLite", "NEXT STAGE"],
+              ["SQLite", "READY"],
             ].map(([label, value]) => (
               <div className="flex justify-between gap-6 px-5 py-4" key={label}>
                 <dt className="text-sm text-slate">{label}</dt>
@@ -67,4 +67,3 @@ export function HomePage() {
     </main>
   );
 }
-
