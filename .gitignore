@@ -24,6 +24,7 @@ __pycache__/
 !.env.example
 .idea/
 .vscode/
+.superpowers/
 .DS_Store
 Thumbs.db
 leetcode copliot/
