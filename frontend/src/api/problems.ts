@@ -1,4 +1,7 @@
 import type {
+  AgentConversation,
+} from "../types/agent";
+import type {
   CategoryOverview,
   ProblemDetail,
   ProblemListItem,
@@ -110,4 +113,37 @@ export function updateProblem(
 
 export function getCategories(): Promise<CategoryOverview> {
   return apiRequest<CategoryOverview>("/api/categories");
+}
+
+export function getAgentConversation(
+  problemId: number,
+): Promise<AgentConversation> {
+  return apiRequest<AgentConversation>(
+    `/api/problems/${problemId}/agent`,
+  );
+}
+
+export function sendAgentMessage(
+  problemId: number,
+  content: string,
+): Promise<AgentConversation> {
+  return apiRequest<AgentConversation>(
+    `/api/problems/${problemId}/agent/messages`,
+    jsonRequestInit("POST", { content }),
+  );
+}
+
+export function confirmAgentToolCall(
+  problemId: number,
+  toolCallId: number,
+): Promise<AgentConversation> {
+  return apiRequest<AgentConversation>(
+    (
+      `/api/problems/${problemId}/agent/tool-calls/`
+      + `${toolCallId}/confirm`
+    ),
+    {
+      method: "POST",
+    },
+  );
 }

@@ -8,6 +8,8 @@ from app.db.base import Base
 from app.models.associations import problem_tags
 
 if TYPE_CHECKING:
+    from app.models.agent_session import AgentSession
+    from app.models.learning_memory import LearningMemory
     from app.models.solution import Solution
     from app.models.tag import Tag
 
@@ -49,4 +51,16 @@ class Problem(Base):
         secondary=problem_tags,
         back_populates="problems",
         lazy="selectin",
+    )
+    agent_session: Mapped["AgentSession | None"] = relationship(
+        back_populates="problem",
+        cascade="all, delete-orphan",
+        single_parent=True,
+        uselist=False,
+    )
+    learning_memories: Mapped[list["LearningMemory"]] = relationship(
+        back_populates="problem",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="LearningMemory.id",
     )

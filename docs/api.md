@@ -113,3 +113,32 @@
 ```text
 GET /api/problems?tag=哈希表&review_only=true
 ```
+
+### `GET /api/problems/{problem_id}/agent`
+
+返回当前题目的 Agent 会话、用户/助手消息、工具轨迹、长期学习记忆和当前学习记录。没有会话时返回空集合，不创建数据。
+
+### `POST /api/problems/{problem_id}/agent/messages`
+
+发送一条 1–4000 字符的导师消息：
+
+```json
+{
+  "content": "为什么找到目标后还要继续向左搜索？"
+}
+```
+
+Agent 最多执行 4 次模型迭代和 4 个白名单工具。成功后返回完整会话；DeepSeek 或 Agent Loop 失败时整个回合回滚。
+
+状态码：
+
+- `200 OK`：消息、回复和工具轨迹已保存。
+- `404 Not Found`：题目不存在。
+- `422 Unprocessable Entity`：消息为空或过长。
+- `502 Bad Gateway`：模型响应、工具循环或最终回复异常。
+- `503 Service Unavailable`：Agent 配置或 DeepSeek 服务不可用。
+- `504 Gateway Timeout`：DeepSeek 响应超时。
+
+### `POST /api/problems/{problem_id}/agent/tool-calls/{tool_call_id}/confirm`
+
+确认 Agent 提议的掌握状态或个人备注更新。接口幂等，只有属于当前题目且状态为 `pending_confirmation` 的 `update_learning_record` Tool Call 可以执行。
