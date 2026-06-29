@@ -97,3 +97,10 @@ python -m pytest
 ```
 
 详细需求、架构、接口和开发阶段参见 [docs](./docs)。
+
+项目运行演示
+<img width="1920" height="925" alt="image" src="https://github.com/user-attachments/assets/1e10d5e7-1958-48e9-b3ed-1bfc691d87c9" />
+<img width="1920" height="927" alt="image" src="https://github.com/user-attachments/assets/74de2d62-3faa-4e00-9e95-a36f47bcd222" />
+<img width="1920" height="921" alt="image" src="https://github.com/user-attachments/assets/8b7329dc-60f4-4c0b-bcd5-d58e10179eca" />
+<img width="1920" height="931" alt="image" src="https://github.com/user-attachments/assets/4ba2bc82-d718-45eb-921e-83a91cada355" />
+<img width="1920" height="886" alt="image" src="https://github.com/user-attachments/assets/19e28bcc-39cd-4da5-bff1-7613bd7d712d" />
