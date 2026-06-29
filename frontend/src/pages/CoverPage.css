@@ -1,0 +1,253 @@
+.cover-page {
+  --cover-void: #071120;
+  --cover-deep: #06101e;
+  --cover-line: rgba(109, 178, 242, 0.1);
+  --cover-accent: #68bbf1;
+  --cover-text: #f3f7ff;
+  --cover-muted: #879bb7;
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--cover-deep);
+  color: var(--cover-text);
+}
+
+.cover-page__scene {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 50% 46%,
+      rgba(39, 105, 166, 0.12),
+      transparent 37%
+    ),
+    var(--cover-void);
+  transform-origin: 50% 50%;
+}
+
+.cover-page__scene::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  content: "LC";
+  color: transparent;
+  font-family: "Arial Narrow", "Bahnschrift Condensed", sans-serif;
+  font-size: clamp(17rem, 39vw, 42rem);
+  font-weight: 850;
+  line-height: 0.72;
+  letter-spacing: -0.16em;
+  white-space: nowrap;
+  opacity: 0.88;
+  -webkit-text-stroke: 1px var(--cover-line);
+  transform: translate(-53%, -50%);
+  user-select: none;
+}
+
+.cover-page__scan {
+  position: absolute;
+  z-index: 1;
+  top: -16%;
+  bottom: -16%;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(104, 187, 241, 0.12) 18%,
+    rgba(104, 187, 241, 0.68) 50%,
+    rgba(104, 187, 241, 0.12) 82%,
+    transparent
+  );
+  box-shadow: 0 0 26px rgba(104, 187, 241, 0.25);
+  animation: cover-scan 6s ease-in-out infinite;
+  transform: translateX(-26vw);
+}
+
+.cover-page__content {
+  position: relative;
+  z-index: 2;
+  width: min(90vw, 72rem);
+  padding: 2rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.cover-page__system {
+  margin: 0;
+  color: var(--cover-accent);
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(0.58rem, 0.9vw, 0.76rem);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+
+.cover-page__title {
+  margin: clamp(1.25rem, 2.4vw, 2rem) 0 0;
+  color: var(--cover-text);
+  font-family: "Bahnschrift Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+  font-size: clamp(3.75rem, 9vw, 8.75rem);
+  font-weight: 780;
+  line-height: 0.85;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.cover-page__tagline {
+  margin: clamp(1.3rem, 2.7vw, 2.25rem) auto 0;
+  color: var(--cover-muted);
+  font-size: clamp(0.88rem, 1.35vw, 1.08rem);
+  line-height: 1.75;
+  letter-spacing: 0.035em;
+}
+
+.cover-page__prompt {
+  position: absolute;
+  z-index: 2;
+  right: 1.5rem;
+  bottom: max(9vh, env(safe-area-inset-bottom));
+  left: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin: 0;
+  color: #d5e7fa;
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(0.62rem, 0.85vw, 0.76rem);
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-align: center;
+  animation: cover-prompt-breathe 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.cover-page__prompt-line {
+  width: clamp(1.4rem, 3vw, 2.6rem);
+  height: 1px;
+  background: rgba(104, 187, 241, 0.55);
+}
+
+.cover-page__trigger {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cover-page__trigger:focus-visible {
+  outline: 0;
+  box-shadow: inset 0 0 0 2px rgba(104, 187, 241, 0.88);
+}
+
+.cover-page__trigger:disabled {
+  cursor: wait;
+}
+
+.cover-page--exiting .cover-page__scene {
+  animation: cover-page-exit 800ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.cover-page--exiting .cover-page__scan,
+.cover-page--exiting .cover-page__prompt {
+  animation-play-state: paused;
+}
+
+@keyframes cover-scan {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: translateX(-26vw);
+  }
+
+  50% {
+    opacity: 0.72;
+    transform: translateX(26vw);
+  }
+}
+
+@keyframes cover-prompt-breathe {
+  0%,
+  100% {
+    opacity: 0.54;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes cover-page-exit {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    filter: blur(7px);
+    transform: scale(1.18);
+  }
+}
+
+@media (max-width: 640px) {
+  .cover-page__scene::before {
+    font-size: clamp(14rem, 75vw, 21rem);
+    line-height: 0.78;
+    transform: translate(-54%, -50%);
+  }
+
+  .cover-page__content {
+    width: 100%;
+    padding-inline: 1.25rem;
+  }
+
+  .cover-page__title {
+    font-size: clamp(3.4rem, 17vw, 5.3rem);
+    line-height: 0.9;
+  }
+
+  .cover-page__tagline {
+    max-width: 19rem;
+  }
+
+  .cover-page__prompt {
+    right: 0.75rem;
+    bottom: max(8vh, calc(env(safe-area-inset-bottom) + 1rem));
+    left: 0.75rem;
+    gap: 0.55rem;
+    letter-spacing: 0.1em;
+  }
+
+  .cover-page__prompt-line {
+    width: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover-page__scan,
+  .cover-page__prompt {
+    animation: none;
+  }
+
+  .cover-page--exiting .cover-page__scene {
+    animation: cover-page-exit-reduced 80ms linear forwards;
+  }
+}
+
+@keyframes cover-page-exit-reduced {
+  to {
+    opacity: 0;
+  }
+}

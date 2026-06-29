@@ -8,9 +8,11 @@ import {
   sendAgentMessage,
   updateProblem,
 } from "../api/problems";
+import { InterfaceState } from "../components/InterfaceState";
 import { LearningRecordPanel } from "../components/LearningRecordPanel";
 import { OriginalProblemPanel } from "../components/OriginalProblemPanel";
 import { SolutionPanel } from "../components/SolutionPanel";
+import { TagBadge } from "../components/TagBadge";
 import { TutorAgentPanel } from "../components/TutorAgentPanel";
 import type { AgentConversation } from "../types/agent";
 import type {
@@ -61,9 +63,7 @@ export function ProblemDetailPage() {
         }
 
         try {
-          const conversation = await getAgentConversation(
-            numericProblemId,
-          );
+          const conversation = await getAgentConversation(numericProblemId);
           if (isActive) {
             setAgentConversation(conversation);
           }
@@ -198,73 +198,106 @@ export function ProblemDetailPage() {
 
   if (isLoading) {
     return (
-      <main className="page-shell min-h-[65vh] py-16">
-        <p className="eyebrow">LOADING / PROBLEM</p>
-        <h1 className="page-title mt-4">正在读取学习记录</h1>
+      <main className="page-shell">
+        <InterfaceState
+          description="正在读取题目、学习记录和 Tutor Agent 会话。"
+          label="RECORD / LOADING"
+          title="正在打开学习记录"
+          tone="loading"
+        />
       </main>
     );
   }
 
   if (loadError || !problem) {
     return (
-      <main className="page-shell min-h-[65vh] py-16">
-        <p className="eyebrow">PROBLEM / NOT_FOUND</p>
-        <h1 className="page-title mt-4">无法打开这条记录</h1>
-        <p className="mt-5 text-slate">{loadError}</p>
-        <Link className="button-secondary mt-8 inline-flex" to="/history">
-          返回刷题记录
-        </Link>
+      <main className="page-shell">
+        <InterfaceState
+          action={
+            <Link className="button-secondary inline-flex" to="/history">
+              返回刷题记录
+            </Link>
+          }
+          description={loadError ?? "这条学习记录不存在或已被删除。"}
+          label="RECORD / NOT_FOUND"
+          title="无法打开这条记录"
+          tone="error"
+        />
       </main>
     );
   }
 
   return (
-    <main className="page-shell py-12 sm:py-16">
+    <main className="page-shell">
       <Link
-        className="font-mono text-xs font-semibold text-cobalt hover:text-cobalt-dark"
+        className="inline-flex items-center gap-2 font-mono text-[0.68rem] font-semibold text-cobalt hover:text-cobalt-dark"
         to="/history"
       >
-        ← 返回刷题记录
+        <span aria-hidden="true">←</span>
+        返回刷题记录
       </Link>
-      <div className="mt-5">
-        <p className="eyebrow">PROBLEM / #{problem.problem_id}</p>
-        <h1 className="page-title mt-4">{problem.title}</h1>
-      </div>
 
-      <div className="mt-8 grid grid-cols-2 border border-ink lg:hidden">
+      <header className="mt-6 grid gap-6 border-b border-line pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="status-chip">RECORD / #{problem.problem_id}</span>
+            <span className="status-chip border-code/35 text-code">
+              {problem.difficulty}
+            </span>
+            <span className="status-chip">{masteryStatus}</span>
+          </div>
+          <h1 className="page-title mt-5 break-words">{problem.title}</h1>
+        </div>
+        <div className="flex max-w-md flex-wrap gap-2 lg:justify-end">
+          {problem.tags.map((tag) => (
+            <TagBadge key={tag} label={tag} tone="accent" />
+          ))}
+        </div>
+      </header>
+
+      <div
+        aria-label="详情内容"
+        className="sticky top-15 z-20 mt-6 grid grid-cols-2 rounded-md border border-line bg-shell p-1 lg:hidden"
+        role="tablist"
+      >
         <button
+          aria-selected={mobileTab === "solution"}
           className={
             mobileTab === "solution"
-              ? "bg-ink px-4 py-3 text-sm font-semibold text-white"
-              : "px-4 py-3 text-sm font-semibold text-ink"
+              ? "rounded bg-cobalt px-4 py-3 text-sm font-bold text-[#071017]"
+              : "rounded px-4 py-3 text-sm font-semibold text-slate"
           }
           onClick={() => setMobileTab("solution")}
+          role="tab"
           type="button"
         >
           题解
         </button>
         <button
+          aria-selected={mobileTab === "agent"}
           className={
             mobileTab === "agent"
-              ? "bg-ink px-4 py-3 text-sm font-semibold text-white"
-              : "px-4 py-3 text-sm font-semibold text-ink"
+              ? "rounded bg-cobalt px-4 py-3 text-sm font-bold text-[#071017]"
+              : "rounded px-4 py-3 text-sm font-semibold text-slate"
           }
           onClick={() => setMobileTab("agent")}
+          role="tab"
           type="button"
         >
           题目导师
         </button>
       </div>
 
-      <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(22rem,0.86fr)]">
+      <div className="mt-6 grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.78fr)]">
         <div
           className={
             mobileTab === "solution"
-              ? "space-y-8"
-              : "hidden space-y-8 lg:block"
+              ? "min-w-0 space-y-6"
+              : "hidden min-w-0 space-y-6 lg:block"
           }
+          role="tabpanel"
         >
-          <div className="grid items-start gap-8 xl:grid-cols-2">
+          <div className="grid min-w-0 items-start gap-6 2xl:grid-cols-2">
             <OriginalProblemPanel
               content={problem.original_content}
               problemId={problem.problem_id}
@@ -295,9 +328,10 @@ export function ProblemDetailPage() {
         <aside
           className={
             mobileTab === "agent"
-              ? "lg:sticky lg:top-6"
-              : "hidden lg:sticky lg:top-6 lg:block"
+              ? "min-w-0 lg:sticky lg:top-20"
+              : "hidden min-w-0 lg:sticky lg:top-20 lg:block"
           }
+          role="tabpanel"
         >
           <TutorAgentPanel
             confirmingToolCallId={confirmingToolCallId}

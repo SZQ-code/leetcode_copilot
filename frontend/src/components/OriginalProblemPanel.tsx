@@ -8,15 +8,15 @@ export function OriginalProblemPanel({
   problemId,
 }: OriginalProblemPanelProps) {
   return (
-    <section className="panel">
-      <header className="flex items-center justify-between border-b border-line px-5 py-4">
+    <section className="panel overflow-hidden">
+      <header className="panel-header bg-shell">
         <div>
-          <p className="eyebrow">ORIGINAL</p>
+          <p className="eyebrow">SOURCE / PROBLEM</p>
           <h2 className="mt-1 text-xl font-bold">原始题目</h2>
         </div>
-        <span className="font-mono text-xs text-slate">#{problemId}</span>
+        <span className="status-chip">#{problemId}</span>
       </header>
-      <pre className="whitespace-pre-wrap p-5 font-mono text-sm leading-7 text-slate">
+      <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap p-5 font-mono text-sm leading-7 text-slate">
         {content}
       </pre>
     </section>

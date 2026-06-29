@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import { getCategories, getProblems } from "../api/problems";
 import { CategoryStatCard } from "../components/CategoryStatCard";
+import { InterfaceState } from "../components/InterfaceState";
 import { LearningOverview } from "../components/LearningOverview";
 import { ProblemCard } from "../components/ProblemCard";
 import type {
@@ -83,51 +84,68 @@ export function CategoryPage() {
   }, [selectedTag, viewMode]);
 
   return (
-    <main className="page-shell py-12 sm:py-16">
-      <p className="eyebrow">CATEGORIES / PATTERNS</p>
-      <h1 className="page-title mt-4">按题型归纳方法</h1>
-      <p className="mt-5 max-w-2xl leading-7 text-slate">
-        从真实刷题记录中识别薄弱题型，把下一次复习放在最需要的位置。
-      </p>
+    <main className="page-shell">
+      <header className="grid gap-6 border-b border-line pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <p className="eyebrow">PATTERNS / REVIEW SYSTEM</p>
+          <h1 className="page-title mt-5">题型归纳</h1>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-slate">
+            从真实刷题记录中识别薄弱题型，把下一次复习放在最需要的位置。
+          </p>
+        </div>
+        <Link className="button-primary inline-flex w-fit" to="/solve">
+          继续解题
+        </Link>
+      </header>
 
       {isOverviewLoading ? (
-        <section className="panel mt-10 p-8">
-          <p className="font-mono text-xs font-semibold tracking-[0.14em] text-cobalt">
-            ANALYZING LEARNING RECORDS
-          </p>
-          <p className="mt-3 text-sm text-slate">正在计算题型掌握情况。</p>
-        </section>
+        <div className="mt-8">
+          <InterfaceState
+            description="正在计算总体掌握率、题型分布和复习队列。"
+            label="ANALYTICS / LOADING"
+            title="正在分析学习记录"
+            tone="loading"
+          />
+        </div>
       ) : overviewError || !overview ? (
-        <section className="panel mt-10 border-l-4 border-l-code p-6" role="alert">
-          <h2 className="font-bold">无法加载题型统计</h2>
-          <p className="mt-2 text-sm text-slate">{overviewError}</p>
-        </section>
+        <div className="mt-8">
+          <InterfaceState
+            description={overviewError ?? "题型统计未返回有效数据。"}
+            label="ANALYTICS / ERROR"
+            title="无法加载题型统计"
+            tone="error"
+          />
+        </div>
       ) : overview.total_problems === 0 ? (
-        <section className="panel mt-10 p-8">
-          <p className="eyebrow">NO LEARNING DATA</p>
-          <h2 className="section-title mt-3">先完成一道题</h2>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-slate">
-            保存第一条解题记录后，这里会自动生成掌握率和题型分布。
-          </p>
-          <Link className="button-primary mt-6 inline-flex" to="/solve">
-            开始解题
-          </Link>
-        </section>
+        <div className="mt-8">
+          <InterfaceState
+            action={
+              <Link className="button-primary inline-flex" to="/solve">
+                开始第一道题
+              </Link>
+            }
+            description="保存第一条解题记录后，这里会自动生成掌握率和题型分布。"
+            label="ANALYTICS / EMPTY"
+            title="还没有可分析的学习数据"
+          />
+        </div>
       ) : (
         <>
-          <div className="mt-10">
+          <div className="mt-8">
             <LearningOverview overview={overview} />
           </div>
 
           <section className="mt-14">
-            <div>
-              <p className="eyebrow">WEAKNESS MAP</p>
-              <h2 className="section-title mt-3">题型掌握分布</h2>
-              <p className="mt-3 text-sm text-slate">
-                点击题型筛选下方题目；再次点击可恢复全部标签。
+            <div className="flex flex-col gap-4 border-b border-line pb-6 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="eyebrow">WEAKNESS / MAP</p>
+                <h2 className="section-title mt-3">题型掌握分布</h2>
+              </div>
+              <p className="max-w-md text-sm leading-6 text-slate">
+                点击题型筛选复习队列；再次点击可恢复全部标签。
               </p>
             </div>
-            <div className="mt-7 grid gap-4 md:grid-cols-2">
+            <div className="mt-6 grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
               {overview.categories.map((category) => (
                 <CategoryStatCard
                   category={category}
@@ -144,15 +162,20 @@ export function CategoryPage() {
           </section>
 
           <section className="mt-14">
-            <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-col gap-5 border-b border-line pb-6 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="eyebrow">REVIEW QUEUE</p>
+                <p className="eyebrow">REVIEW / QUEUE</p>
                 <h2 className="section-title mt-3">
-                  {selectedTag ?? "全部标签"} ·{" "}
+                  {selectedTag ?? "全部标签"}
+                  <span className="mx-2 text-slate">/</span>
                   {viewMode === "review" ? "待复习" : "全部记录"}
                 </h2>
               </div>
-              <div className="flex w-fit border border-line bg-surface p-1">
+              <div
+                aria-label="复习队列显示范围"
+                className="flex w-fit rounded-md border border-line bg-shell p-1"
+                role="group"
+              >
                 {[
                   ["review", "待复习"],
                   ["all", "全部记录"],
@@ -160,9 +183,9 @@ export function CategoryPage() {
                   <button
                     aria-pressed={viewMode === mode}
                     className={[
-                      "px-4 py-2 text-sm font-semibold transition-colors",
+                      "rounded px-4 py-2 text-sm font-semibold transition-colors",
                       viewMode === mode
-                        ? "bg-ink text-white"
+                        ? "bg-cobalt text-[#071017]"
                         : "text-slate hover:text-ink",
                     ].join(" ")}
                     key={mode}
@@ -176,26 +199,37 @@ export function CategoryPage() {
             </div>
 
             {areProblemsLoading ? (
-              <div className="panel mt-7 p-6">
-                <p className="font-mono text-xs text-cobalt">
-                  LOADING REVIEW QUEUE
-                </p>
+              <div className="mt-6">
+                <InterfaceState
+                  description="正在读取当前范围内的学习记录。"
+                  label="QUEUE / LOADING"
+                  title="正在加载复习队列"
+                  tone="loading"
+                />
               </div>
             ) : problemsError ? (
-              <div className="panel mt-7 border-l-4 border-l-code p-6" role="alert">
-                <h3 className="font-bold">无法加载题目列表</h3>
-                <p className="mt-2 text-sm text-slate">{problemsError}</p>
+              <div className="mt-6">
+                <InterfaceState
+                  description={problemsError}
+                  label="QUEUE / ERROR"
+                  title="无法加载复习队列"
+                  tone="error"
+                />
               </div>
             ) : problems.length === 0 ? (
-              <div className="panel mt-7 p-6">
-                <p className="text-sm text-slate">
-                  {viewMode === "review"
-                    ? "该范围内没有待复习题目。"
-                    : "该范围内还没有刷题记录。"}
-                </p>
+              <div className="mt-6">
+                <InterfaceState
+                  description={
+                    viewMode === "review"
+                      ? "该范围内没有待复习题目，可以切换到全部记录。"
+                      : "该范围内还没有刷题记录。"
+                  }
+                  label="QUEUE / EMPTY"
+                  title="当前队列为空"
+                />
               </div>
             ) : (
-              <div className="mt-7 grid gap-5 lg:grid-cols-2">
+              <div className="mt-6 space-y-4">
                 {problems.map((problem) => (
                   <ProblemCard
                     createdAt={problem.created_at}

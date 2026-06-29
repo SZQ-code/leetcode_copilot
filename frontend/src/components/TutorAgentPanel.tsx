@@ -18,14 +18,14 @@ interface TutorAgentPanelProps {
 
 const memoryLabels: Record<LearningMemoryType, string> = {
   misconception: "误区",
-  strength: "掌握点",
   review_focus: "复习重点",
+  strength: "掌握点",
 };
 
 const memoryStyles: Record<LearningMemoryType, string> = {
-  misconception: "border-code/40 bg-orange-50 text-code",
-  strength: "border-emerald-600/40 bg-emerald-50 text-emerald-800",
-  review_focus: "border-cobalt/40 bg-mist text-cobalt-dark",
+  misconception: "border-danger/35 bg-danger/[0.08] text-danger",
+  review_focus: "border-cobalt/35 bg-mist text-cobalt",
+  strength: "border-success/35 bg-success/[0.08] text-success",
 };
 
 const quickActions = [
@@ -48,7 +48,10 @@ export function TutorAgentPanel({
   const memories = conversation?.memories ?? [];
   const messages = conversation?.messages ?? [];
   const toolCallsByMessage = useMemo(() => {
-    const grouped = new Map<number, NonNullable<typeof conversation>["tool_calls"]>();
+    const grouped = new Map<
+      number,
+      NonNullable<typeof conversation>["tool_calls"]
+    >();
     for (const toolCall of conversation?.tool_calls ?? []) {
       const group = grouped.get(toolCall.trigger_message_id) ?? [];
       group.push(toolCall);
@@ -72,15 +75,16 @@ export function TutorAgentPanel({
   }
 
   return (
-    <section className="panel flex h-[calc(100vh-7rem)] min-h-[36rem] flex-col">
-      <header className="border-b border-line px-5 py-4">
+    <section className="panel flex min-h-[34rem] flex-col overflow-hidden lg:h-[calc(100vh-6.5rem)]">
+      <header className="border-b border-line bg-shell px-5 py-4">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="eyebrow">TUTOR / AGENT</p>
             <h2 className="mt-1 text-xl font-bold">题目导师</h2>
           </div>
-          <span className="font-mono text-xs text-emerald-700">
-            ● TOOL READY
+          <span className="status-chip border-success/30 text-success">
+            <span className="size-1.5 rounded-full bg-success" />
+            TOOL READY
           </span>
         </div>
 
@@ -88,7 +92,7 @@ export function TutorAgentPanel({
           {memories.length > 0 ? (
             memories.slice(-6).map((memory) => (
               <span
-                className={`border px-2 py-1 text-xs ${memoryStyles[memory.memory_type]}`}
+                className={`rounded-full border px-2.5 py-1 text-[0.68rem] ${memoryStyles[memory.memory_type]}`}
                 key={memory.id}
                 title={memory.content}
               >
@@ -96,8 +100,8 @@ export function TutorAgentPanel({
               </span>
             ))
           ) : (
-            <span className="text-xs text-slate">
-              对话中形成的误区和复习重点会保存在这里。
+            <span className="text-xs leading-5 text-slate">
+              对话形成的误区、掌握点和复习重点会保存在这里。
             </span>
           )}
         </div>
@@ -105,25 +109,29 @@ export function TutorAgentPanel({
 
       <div
         aria-live="polite"
-        className="flex-1 space-y-4 overflow-y-auto px-4 py-5"
+        className="flex-1 space-y-4 overflow-y-auto bg-paper/35 px-4 py-5"
       >
         {isLoading ? (
-          <p className="text-sm text-slate">正在加载导师会话…</p>
+          <div className="flex items-center gap-3 text-sm text-slate">
+            <span className="status-pulse size-2 rounded-full bg-cobalt" />
+            正在加载导师会话…
+          </div>
         ) : messages.length === 0 ? (
           <div>
             <p className="text-sm leading-7 text-slate">
-              围绕当前题目追问。Agent 会读取题目上下文，并按需要调用历史、
-              学习画像和记忆工具。
+              围绕当前题目继续追问。Agent
+              会按需读取题目上下文、相似历史和学习画像。
             </p>
             <div className="mt-5 grid gap-2">
               {quickActions.map((action) => (
                 <button
-                  className="border border-line bg-paper px-3 py-2 text-left text-sm text-ink hover:border-cobalt hover:text-cobalt"
+                  className="rounded-md border border-line bg-shell px-3 py-2.5 text-left text-sm leading-6 text-slate transition-colors hover:border-cobalt/55 hover:bg-mist hover:text-ink"
                   disabled={isSending}
                   key={action}
                   onClick={() => submitMessage(action)}
                   type="button"
                 >
+                  <span className="mr-2 font-mono text-cobalt">›</span>
                   {action}
                 </button>
               ))}
@@ -140,11 +148,15 @@ export function TutorAgentPanel({
                 <div
                   className={
                     message.role === "user"
-                      ? "ml-8 bg-ink p-3 text-sm leading-6 whitespace-pre-wrap text-white"
-                      : "mr-5 border border-cobalt/30 bg-mist p-3 text-sm leading-6 whitespace-pre-wrap text-ink"
+                      ? "ml-8 rounded-md border border-cobalt/25 bg-mist p-3 text-sm leading-6 whitespace-pre-wrap text-ink"
+                      : "mr-5 rounded-md border border-line bg-surface p-3 text-sm leading-6 whitespace-pre-wrap text-ink"
                   }
                 >
-                  <p className="mb-1 font-mono text-[10px] font-semibold tracking-wider opacity-65">
+                  <p
+                    className={`mb-1 font-mono text-[0.62rem] font-semibold tracking-[0.1em] ${
+                      message.role === "user" ? "text-cobalt" : "text-success"
+                    }`}
+                  >
                     {message.role === "user" ? "YOU" : "TUTOR AGENT"}
                   </p>
                   {message.content}
@@ -160,34 +172,37 @@ export function TutorAgentPanel({
         )}
 
         {isSending ? (
-          <div className="mr-5 border border-cobalt/30 bg-mist p-3 text-sm text-slate">
-            <p className="font-mono text-[10px] font-semibold tracking-wider text-cobalt">
-              AGENT LOOP
+          <div className="mr-5 rounded-md border border-cobalt/30 bg-mist p-3 text-sm text-slate">
+            <p className="font-mono text-[0.62rem] font-semibold tracking-[0.1em] text-cobalt">
+              AGENT LOOP / RUNNING
             </p>
             <p className="mt-2">正在思考并按需调用学习工具…</p>
           </div>
         ) : null}
         {errorMessage ? (
-          <div className="border-l-4 border-code bg-orange-50 p-3 text-sm text-code" role="alert">
+          <div
+            className="rounded-md border border-danger/40 bg-danger/[0.08] p-3 text-sm leading-6 text-danger"
+            role="alert"
+          >
             {errorMessage}
           </div>
         ) : null}
       </div>
 
       <form
-        className="border-t border-line bg-paper p-4"
+        className="border-t border-line bg-shell p-4"
         onSubmit={handleSubmit}
       >
         <div className="flex items-center justify-between gap-3">
           <label className="text-xs font-semibold" htmlFor="agent-message">
             继续追问
           </label>
-          <span className="font-mono text-[10px] text-slate">
+          <span className="font-mono text-[0.62rem] text-slate">
             {draft.length} / 4000
           </span>
         </div>
         <textarea
-          className="mt-2 min-h-24 w-full resize-y border border-line bg-surface px-3 py-2 text-sm leading-6 outline-none placeholder:text-slate/60"
+          className="field-control mt-2 min-h-24 w-full resize-y leading-6"
           disabled={isLoading || isSending}
           id="agent-message"
           maxLength={4000}

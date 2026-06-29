@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { getProblems } from "../api/problems";
+import { InterfaceState } from "../components/InterfaceState";
 import { ProblemCard } from "../components/ProblemCard";
 import type { ProblemListItem } from "../types/problem";
 
@@ -40,55 +41,68 @@ export function HistoryPage() {
   }, []);
 
   return (
-    <main className="page-shell py-12 sm:py-16">
-      <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+    <main className="page-shell">
+      <header className="grid gap-6 border-b border-line pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
-          <p className="eyebrow">HISTORY / REVIEW</p>
-          <h1 className="page-title mt-4">刷题记录</h1>
+          <p className="eyebrow">HISTORY / LEARNING LOG</p>
+          <h1 className="page-title mt-5">刷题记录</h1>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-slate">
+            每次成功生成解析都会保存为学习资产。重新打开记录，继续复盘或向
+            Tutor Agent 追问。
+          </p>
         </div>
-        <p className="max-w-md text-sm leading-6 text-slate">
-          每次成功生成解析都会保存为学习记录。最新提交显示在最前面。
-        </p>
-      </div>
-
-      {isLoading ? (
-        <section className="panel mt-10 p-8">
-          <p className="font-mono text-xs font-semibold tracking-[0.14em] text-cobalt">
-            LOADING HISTORY
-          </p>
-          <p className="mt-3 text-sm text-slate">正在读取 SQLite 学习记录。</p>
-        </section>
-      ) : errorMessage ? (
-        <section className="panel mt-10 border-l-4 border-l-code p-6" role="alert">
-          <h2 className="font-bold">无法加载刷题记录</h2>
-          <p className="mt-2 text-sm text-slate">{errorMessage}</p>
-        </section>
-      ) : problems.length === 0 ? (
-        <section className="panel mt-10 p-8">
-          <p className="eyebrow">NO RECORDS YET</p>
-          <h2 className="section-title mt-3">先完成第一道题</h2>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-slate">
-            提交题目并生成解析后，记录会自动出现在这里。
-          </p>
-          <Link className="button-primary mt-6 inline-flex" to="/solve">
-            开始解题
+        <div className="flex items-center gap-3">
+          <span className="status-chip">
+            {isLoading ? "READING DATABASE" : `${problems.length} RECORDS`}
+          </span>
+          <Link className="button-primary inline-flex" to="/solve">
+            新建解题
           </Link>
-        </section>
-      ) : (
-        <div className="mt-10 grid gap-5 lg:grid-cols-2">
-          {problems.map((problem) => (
-            <ProblemCard
-              createdAt={problem.created_at}
-              difficulty={problem.difficulty}
-              id={problem.problem_id}
-              key={problem.problem_id}
-              status={problem.mastery_status}
-              tags={problem.tags}
-              title={problem.title}
-            />
-          ))}
         </div>
-      )}
+      </header>
+
+      <section className="mt-8">
+        {isLoading ? (
+          <InterfaceState
+            description="正在从 SQLite 读取已保存的学习记录。"
+            label="DATABASE / LOADING"
+            title="正在加载刷题记录"
+            tone="loading"
+          />
+        ) : errorMessage ? (
+          <InterfaceState
+            description={errorMessage}
+            label="DATABASE / ERROR"
+            title="无法加载刷题记录"
+            tone="error"
+          />
+        ) : problems.length === 0 ? (
+          <InterfaceState
+            action={
+              <Link className="button-primary inline-flex" to="/solve">
+                开始第一道题
+              </Link>
+            }
+            description="提交题目并生成解析后，记录会自动保存在这里。"
+            label="HISTORY / EMPTY"
+            title="还没有学习记录"
+          />
+        ) : (
+          <div className="space-y-4">
+            {problems.map((problem) => (
+              <ProblemCard
+                createdAt={problem.created_at}
+                difficulty={problem.difficulty}
+                id={problem.problem_id}
+                key={problem.problem_id}
+                status={problem.mastery_status}
+                tags={problem.tags}
+                title={problem.title}
+              />
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

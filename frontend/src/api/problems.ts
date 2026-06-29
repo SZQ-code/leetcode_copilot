@@ -16,6 +16,11 @@ const API_BASE_URL = (
   import.meta.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL
 ).replace(/\/$/, "");
 
+interface HealthResponse {
+  service: string;
+  status: string;
+}
+
 async function readErrorDetail(response: Response): Promise<string | null> {
   try {
     const payload = (await response.json()) as {
@@ -78,6 +83,10 @@ export function solveProblem(content: string): Promise<ProblemDetail> {
     "/api/problems/solve",
     jsonRequestInit("POST", payload),
   );
+}
+
+export function getHealth(): Promise<HealthResponse> {
+  return apiRequest<HealthResponse>("/health");
 }
 
 export function getProblems(
